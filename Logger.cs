@@ -28,6 +28,8 @@ namespace RhinoCommon.Rest
         static bool _initialized = false;
         public static void WriteInfo(string message, string apiToken)
         {
+            Console.WriteLine($"INFO: {DateTime.Now.ToString("o")} - {message}");
+            return;
             if (!Enabled)
                 return;
             if(!_initialized)
