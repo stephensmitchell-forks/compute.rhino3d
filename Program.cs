@@ -124,6 +124,27 @@ namespace RhinoCommon.Rest
         {
             Get["/healthcheck"] = _ => "healthy";
 
+            Post["/hammertime"] = _ =>
+            {
+                Logger.WriteInfo($"POST {this.Request.Path}", null);
+                Logger.WriteInfo("It's hammer time!", null);
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+
+                var pt = Rhino.Geometry.Point3d.Origin;
+                var vec = Rhino.Geometry.Vector3d.ZAxis;
+                vec.Unitize();
+                var sp1 = new Rhino.Geometry.Sphere(pt, 12);
+                var msp1 = Rhino.Geometry.Mesh.CreateFromSphere(sp1, 1000, 1000);
+                var msp2 = msp1.DuplicateMesh();
+                msp2.Translate(new Rhino.Geometry.Vector3d(10, 10, 10));
+                var msp3 = Mesh.CreateBooleanIntersection(new Mesh[] { msp1 }, new Mesh[] { msp2 });
+
+                watch.Stop();
+                Logger.WriteInfo($"The party lasted for {watch.Elapsed.TotalSeconds} seconds!", null);
+
+                return $"{msp3[0].Volume()}";
+            };
+
             var endpoints = EndPointDictionary.GetDictionary();
             foreach (var kv in endpoints)
             {
